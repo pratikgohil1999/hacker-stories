@@ -20,40 +20,51 @@ const App = () => {
     },
   ];
 
-  const [searchTerm,setSearchTerm]=React.useState('');
+  const [searchTerm, serSearchTerm] = React.useState('React');
 
-  const handleChange = (event) => {
-    setSearchTerm(event.target.value);
-  }
+  const handleSearch = (event) => {
+    serSearchTerm(event.target.value);
+  };
+
+  const searchedStories = stories.filter(story =>
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <h1>My Hacker Stories</h1>
-
-      <label htmlFor="search">Search :</label>
-      <input id="search" type="text" onChange={handleChange} />
-
-      <p>
-        Searching for <strong>{searchTerm}</strong>
-      </p>
-
+      <Serach search={searchTerm} onSearch={handleSearch} />
       <hr />
-      <List list={stories} />
+      <List list={searchedStories} />
     </div>
   );
 };
 
-const List = (props) =>
-  props.list.map(item => (
-    <div key={item.objectID}>
-      <span>
-        <a href={item.url}>{item.title}</a>
-      </span>
-      <span> {item.author}</span>
-      <span> {item.num_comments}</span>
-      <span> {item.points}</span>
-    </div>
-  ));
+const Serach = ({ search, onSearch }) => (
+  <div>
+    <label htmlFor="search">Search :</label>
+    <input
+      id="search"
+      type="text"
+      value={search}
+      onChange={onSearch}
+    />
+  </div>
+);
 
+const List = ({ list }) =>
+  list.map(({ objectID, ...item }) => <Item key={objectID}{...item} />);
 
+const Item = ({ title, url, author, num_comments, points }) => (
+  <div>
+    <span>
+      <a href={url}>{title}</a>
+    </span>
+    <span> {author}</span>
+    <span> {num_comments}</span>
+    <span> {points}</span>
+  </div>
+);
 
 export default App;
+
